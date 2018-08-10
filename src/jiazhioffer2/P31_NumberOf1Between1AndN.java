@@ -15,5 +15,4 @@ public class P31_NumberOf1Between1AndN {
             return 0;
         return 0;
     }
-
 }
