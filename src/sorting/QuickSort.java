@@ -1,6 +1,9 @@
 package sorting;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @Author Zhang
@@ -15,11 +18,12 @@ public class QuickSort {
     public static void main(String[] args) {
         int [] array = {6,3,5,7,9,2,4,6,8,0};
 
-        quickSort(array,0,array.length-1);
+        quickSort1(array,0,array.length-1);
 
         System.out.println(Arrays.toString(array));
     }
 
+    //快排的递归实现
     public static void quickSort(int[] array,int left,int right){
         if(left<=right){
             //基准数
@@ -48,6 +52,32 @@ public class QuickSort {
             array[low] = sentinel;
             quickSort(array,left,low-1);
             quickSort(array,low+1,right);
+        }
+    }
+
+    //快排的非递归实现
+    public static void quickSort1(int s[],int left,int right){
+        LinkedHashMap<Integer,Integer> lhp=new LinkedHashMap<>();
+        //将0,n放入LinkedHashMap
+        lhp.put(left,right);
+        while(!lhp.isEmpty()){      //只要有需要排序的段
+            //读取left，right
+            Iterator<Map.Entry<Integer,Integer>> it=lhp.entrySet().iterator();
+            left=it.next().getKey();
+            right=lhp.get(left);
+            //并从LinkedHashMap中删除
+            lhp.remove(left,right);
+            if(left>=right)continue;
+            int i=left,j=right,temp=s[right];
+            while(i<j){         //遍历排序一遍
+                while(s[i]<=temp&&i<j)i++;
+                if(i<j)s[j--]=s[i];
+                while(s[j]>=temp&&i<j)j--;
+                if(i<j)s[i++]=s[j];
+            }
+            s[i]=temp;
+            lhp.put(left,i-1);
+            lhp.put(i+1,right);
         }
     }
 }
