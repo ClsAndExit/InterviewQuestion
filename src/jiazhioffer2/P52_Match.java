@@ -42,6 +42,61 @@ public class P52_Match {
     }
 
     public static boolean matchCore(char[] str,int strIndex, char[] pattern,int patternIndex) {
+        //有效性检验，str到尾部，pattern到尾部，匹配成功
+        if (strIndex== str.length && patternIndex ==pattern.length){
+            return true;
+        }
+        //pattern先到尾部，匹配失败
+        if (strIndex != str.length && patternIndex ==pattern.length){
+            return false;
+        }
+
+        //模式第二个是*，且字符串第一个和模式第一个匹配，分三种匹配模式
+        //如果不匹配，模式后移两位（可以出现0次）
+
+        //下一个是*
+        if (patternIndex+1<pattern.length && pattern[patternIndex+1] == '*'){
+            //当前字符匹配，且str未到达尾部
+            if ((strIndex!=str.length&&pattern[patternIndex] == str[strIndex])||
+                    (pattern[patternIndex] == '.' && strIndex != str.length)){
+                /**
+                 * 三种情况：
+                 * 1、模式后移2，视为匹配0个字符
+                 * 2、模式后移2，字符串后移1，视为匹配1个字符
+                 * 3、模式Index不变，字符串后移一位，去匹配字符串中的下一个字符
+                 */
+                return matchCore(str,strIndex,pattern,patternIndex+2)
+                        ||matchCore(str,strIndex+1,pattern,patternIndex+2)
+                        ||matchCore(str,strIndex+1,pattern,patternIndex);
+            }else {
+                return matchCore(str,strIndex,pattern,patternIndex+2);
+            }
+        }
+        //模式第二个不是*，且字符串第一个和模式第一个匹配，则都后移一位，否则直接返回false
+        if ((strIndex != str.length && pattern[patternIndex] == str[strIndex])||
+                (pattern[patternIndex] == '.' && strIndex != str.length)){
+            return matchCore(str,strIndex+1,pattern,patternIndex+1);
+        }
+
         return false;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
