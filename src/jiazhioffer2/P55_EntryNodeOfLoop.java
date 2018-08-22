@@ -1,5 +1,7 @@
 package jiazhioffer2;
 
+import java.util.HashSet;
+
 /**
  * @Author Zhang
  * @Date 2018/8/21 10:37
@@ -24,15 +26,15 @@ public class P55_EntryNodeOfLoop {
         node4.next = node5;
         node5.next = node6;
         node6.next = node7;
-       // node7.next = node3;
+        node7.next = node3;
 //
 //        for (int i = 0; i < 20; i++) {
 //            System.out.println(head.val);
 //            head = head.next;
 //        }
-        System.out.println(EntryNodeOfLoop1(head).val);
-      //  System.out.println(EntryNodeOfLoop2(head));
-      //  System.out.println(EntryNodeOfLoop3(head));
+        //System.out.println(EntryNodeOfLoop1(head).val);
+        System.out.println(EntryNodeOfLoop2(head).val);
+        System.out.println(EntryNodeOfLoop3(head).val);
 
     }
 
@@ -47,8 +49,9 @@ public class P55_EntryNodeOfLoop {
         if(pHead==null|| pHead.next==null){
             return null;
         }
-        ListNode fast=pHead.next;
         ListNode slow=pHead;
+        ListNode fast=pHead.next;
+
         while(fast!=null){
             slow.next=null;
             slow=fast;
@@ -58,12 +61,31 @@ public class P55_EntryNodeOfLoop {
     }
 
     public static ListNode EntryNodeOfLoop2 (ListNode pHead){
-
-        return new ListNode();
+        HashSet<ListNode> set = new HashSet<ListNode>();
+        while (pHead != null){
+            if (!set.add(pHead)){
+                return pHead;
+            }
+            pHead = pHead.next;
+        }
+        return null;
     }
 
     public static ListNode EntryNodeOfLoop3 (ListNode pHead){
-
-        return new ListNode();
+        ListNode fast = pHead;
+        ListNode slow = pHead;
+        while(fast !=null && fast.next !=null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if(fast == slow) {
+                ListNode p = pHead;
+                while( p != slow) {
+                    p = p.next;
+                    slow = slow.next;
+                }
+                return p;
+            }
+        }
+        return null;
     }
 }
