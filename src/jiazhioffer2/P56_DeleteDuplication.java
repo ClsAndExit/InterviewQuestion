@@ -26,7 +26,7 @@ public class P56_DeleteDuplication {
         node5.next = node6;
         node6.next = node7;
 
-        ListNode pHead = deleteDuplication(head);
+        ListNode pHead = deleteDuplication1(head);
         while (pHead!= null){
             System.out.println(pHead.val);
             pHead = pHead.next;
@@ -40,6 +40,33 @@ public class P56_DeleteDuplication {
      * @param pHead
      * @return
      */
+
+    public static ListNode deleteDuplication1(ListNode pHead){
+        if (pHead == null || pHead.next == null){
+            return pHead;
+        }else {
+            ListNode newNode = new ListNode(-1);
+            newNode.next = pHead;
+            ListNode pre  = newNode;
+            ListNode p = pHead;
+            ListNode next = null;
+            while (p!=null && p.next!=null){
+                next = p.next;
+                if (p.val == next.val){
+                    while (next != null && next.val == p.val){
+                        next = next.next;
+                    }
+                    pre.next = next;
+                    p = next;
+                }else {
+                    pre = p;
+                    p = p.next;
+                }
+            }
+            return newNode.next;
+        }
+    }
+
     public static ListNode deleteDuplication(ListNode pHead){
         //只有0个或者1个节点，则直接返回
         if (pHead == null || pHead.next == null){
