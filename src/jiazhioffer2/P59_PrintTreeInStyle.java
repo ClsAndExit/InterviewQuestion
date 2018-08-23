@@ -1,6 +1,8 @@
 package jiazhioffer2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Stack;
 
 /**
  * @Author Zhang
@@ -30,15 +32,56 @@ public class P59_PrintTreeInStyle {
         node1.right = node4;
 
         node2.right = node5;
-
+        ArrayList<ArrayList<Integer>> list =Print(root);
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(Arrays.toString(list.get(i).toArray()));
+            System.out.println();
+        }
     }
 
     public static ArrayList<ArrayList<Integer>> Print(TreeNode pRoot){
         ArrayList<ArrayList<Integer>> lists = new ArrayList<ArrayList<Integer>>();
-        ArrayList<Integer> list = new ArrayList<Integer>();
 
-
-
+        int layer = 1;//用来标记奇偶层
+        //s1存奇数层节点
+        Stack<TreeNode> s1 = new Stack<TreeNode>();
+        s1.push(pRoot);
+        //s2存偶数层节点
+        Stack<TreeNode> s2 = new Stack<TreeNode>();
+        while (!s1.empty() || !s2.empty()){
+            //遍历奇数层的节点，将值存入ArrayList，并将下一层的节点压入Stack2
+            if (layer % 2 != 0){
+                ArrayList<Integer> list = new ArrayList<Integer>();
+                while (!s1.empty()){
+                    TreeNode node = s1.pop();
+                    if (node != null){
+                        list.add(node.val);
+                        s2.push(node.left);
+                        s2.push(node.right);
+                    }
+                }
+                if (!list.isEmpty()){
+                    lists.add(list);
+                    //遍历下一层，修改标识
+                    layer++;
+                }
+            }else{
+                ArrayList<Integer> list = new ArrayList<Integer>();
+                while (!s2.empty()){
+                    TreeNode node = s2.pop();
+                    if (node != null){
+                        list.add(node.val);
+                        s1.push(node.right);
+                        s1.push(node.left);
+                    }
+                }
+                if (!list.isEmpty()){
+                    lists.add(list);
+                    //遍历下一层，修改标识
+                    layer++;
+                }
+            }
+        }
 
         return lists;
     }
