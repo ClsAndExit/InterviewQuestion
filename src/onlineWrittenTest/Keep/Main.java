@@ -11,6 +11,7 @@ public class Main {
          * https://blog.csdn.net/fbz123456/article/details/51024299
          *
          * 2、hash线性探测方法解决冲突
+         *    详情请见：InterviewQuestion\src\dataStructureInNowCoder\learningNotes\用拉链法和线性探测法解决哈希冲突.txt
          *
          * 3、代码验证如下
          *
