@@ -1,0 +1,1278 @@
+Index: ZipUtil.java
+===================================================================
+--- ZipUtil.java	(revision 0)
++++ ZipUtil.java	(revision 4)
+@@ -0,0 +1,91 @@
++package com.agentsale.util;
++
++import java.io.Closeable;
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.FileOutputStream;
++import java.io.IOException;
++import java.util.Date;
++import java.util.zip.ZipEntry;
++import java.util.zip.ZipOutputStream;
++
++public class ZipUtil{        
++	private String fileName;  
++	
++	public String getZipFileName() {  
++		return fileName;  
++	}  
++	
++	public void setZipFileName(String fileName) {     
++		this.fileName = fileName+new Date().getTime()+".zip";  
++	}  
++	
++	/**
++	 * 
++	 * @param subs 待压缩文件列表
++	 * @param baseName 待压缩文件目录
++	 * @param fileName zip文件完整路径，包括文件名
++	 * @throws IOException
++	 */
++	public void zip(File[] subs, String baseName, String fileName) throws IOException{
++		File file = new File(fileName);
++		
++		if(file.exists()){
++			file.delete();
++		}
++		
++		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
++
++		try {
++			for (int i=0; i<subs.length; i++) {
++				File f = subs[i];
++				zos.putNextEntry(new ZipEntry(baseName + f.getName()));
++				FileInputStream fis = new FileInputStream(f);
++				byte[] buffer = new byte[1024];
++				int r = 0;
++				while ((r = fis.read(buffer)) != -1) {
++					zos.write(buffer, 0, r);
++				}
++				zos.closeEntry();
++				closeQuietly(fis);
++			}
++		} catch (Exception e) {
++			e.printStackTrace();
++		}finally {
++            closeQuietly(zos);
++        }
++	}
++	
++	/**
++     * 关闭一个或多个流对象
++     * 
++     * @param closeables
++     *            可关闭的流对象列表
++     * @throws IOException
++     */
++    public static void close(Closeable... closeables) throws IOException {
++        if (closeables != null) {
++            for (Closeable closeable : closeables) {
++                if (closeable != null) {
++                    closeable.close();
++                }
++            }
++        }
++    }
++ 
++    /**
++     * 关闭一个或多个流对象
++     * 
++     * @param closeables
++     *            可关闭的流对象列表
++     */
++    public static void closeQuietly(Closeable... closeables) {
++        try {
++            close(closeables);
++        } catch (IOException e) {
++        	e.printStackTrace();
++        }
++    }
++
++	
++}
+Index: StringUtil.java
+===================================================================
+--- StringUtil.java	(revision 0)
++++ StringUtil.java	(revision 4)
+@@ -0,0 +1,713 @@
++package com.agentsale.util;
++
++import java.io.BufferedInputStream;
++import java.io.BufferedOutputStream;
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.UnsupportedEncodingException;
++import java.net.URLDecoder;
++import java.net.URLEncoder;
++import java.text.CharacterIterator;
++import java.text.DecimalFormat;
++import java.text.SimpleDateFormat;
++import java.text.StringCharacterIterator;
++import java.util.ArrayList;
++import java.util.Calendar;
++import java.util.Date;
++import java.util.HashMap;
++import java.util.Iterator;
++import java.util.List;
++import java.util.Map;
++import java.util.Random;
++import java.util.StringTokenizer;
++import java.util.regex.Matcher;
++import java.util.regex.Pattern;
++
++import javax.servlet.http.HttpServletRequest;
++import javax.servlet.http.HttpServletResponse;
++
++/**
++ * 字符串处理工具类
++ */
++public class StringUtil {
++	public static HashMap<String, String> escapeCharMap = new HashMap<String, String>();
++	static {
++		escapeCharMap.put("<", "&lt;");
++		escapeCharMap.put(">", "&gt;");
++		escapeCharMap.put("&", "&amp;");
++		escapeCharMap.put("\"", "&quot;");
++		escapeCharMap.put("'", "&apos;");
++	}
++
++	/**
++	 * utf8解转码
++	 * Description :.
++	 * 
++	 * @param str the str
++	 * 
++	 * @return the string
++	 */
++	public static String utf8Decoder(String str) {
++		try {
++			if(isEmpty(str)){
++				return str;
++			}
++			return URLDecoder.decode(str, "UTF-8");
++		} catch (UnsupportedEncodingException e) {
++			e.printStackTrace();
++		}
++		return str;
++	}
++	
++	/**
++	 * utf8转码 
++	 * Description :.
++	 * 
++	 * @param str the str
++	 * 
++	 * @return the string
++	 */
++	public static String utf8Encoder(String str){
++		try {
++			if(isEmpty(str)){
++				return str;
++			}
++			return URLEncoder.encode(str,"UTF-8");
++		} catch (Exception e) {
++			e.printStackTrace();
++		}
++		return str;
++	}
++	
++	/**
++	 * 屏蔽手机号码 中间4位
++	 * 
++	 * @param mobile
++	 * @return 136****8888
++	 */
++	public static String shieldMobile(String mobile) {
++		if (isEmpty(mobile)) {
++			return null;
++		}
++		return mobile.substring(0, 3) + "****" + mobile.substring(7, 11);
++	}
++
++	/**
++	 * 返回随机 length 位 字符 包括 数字和字母大小写
++	 * @param length 几位 
++	 * @return length 位 字符串
++	 */
++	public static String getRodamCode(int length){
++		Random rand = new Random(); // 设置随机种子
++		String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTYVWXYZ";
++        int size = base.length();
++        StringBuffer str = new StringBuffer();
++        for (int i = 0; i < length; i++) {
++            int start = rand.nextInt(size);
++            String tmpStr = base.substring(start, start + 1);
++            str.append(tmpStr);
++
++        }
++		return str.toString();
++	}
++	/**
++	 * put string array into map with a key, this method will return the detail
++	 * information of array This method can be used in servlet for log many
++	 * parameter array, and you can not worry about NULL POINT EXCEPTION see
++	 * main method
++	 * 
++	 * @param map
++	 * @return
++	 */
++	public static String ArrayToString(Map<String, String[]> map) {
++		String res = "";
++		for (String key : map.keySet()) {
++			String[] values = map.get(key);
++			if (values != null) {
++				res = res + key + "=[";
++				for (String value : values) {
++					res = res + value + ",";
++				}
++				if (res.length() - res.lastIndexOf(",") == 1) {
++					res = res.substring(0, res.lastIndexOf(","));
++				}
++				res = res + "],";
++			} else {
++				res = res + key + "=NULL,";
++			}
++
++		}
++		if (res.length() - res.lastIndexOf(",") == 1) {
++			res = res.substring(0, res.lastIndexOf(","));
++		}
++		return res;
++	}
++
++	// 版本规范是0~9999.0~9999.0~9999
++	public static boolean checkVersion(String version) {
++		if (version == null || "".equals(version)
++				|| version.split("\\.").length != 3) {
++			return false;
++		}
++		try {
++			String[] numbers = version.split("\\.");
++			for (int i = 0; i < numbers.length; i++) {
++				Long num = Long.parseLong(numbers[i]);
++				if (num > 9999L || num < 0L)
++					return false;
++			}
++		} catch (Exception e) {
++			return false;
++		}
++		return true;
++	}
++
++	/**
++	 * 截取字符串
++	 * @param str
++	 * @param end
++	 * @return
++	 */
++	public static String subString(String str,int end){
++		if(isEmpty(str)){
++			return str;
++		}
++		int length = str.length();
++		if(end >= length){
++			return str;
++		}
++		return str.substring(0,end);
++	}
++
++	/**
++	 * 下载文件
++	 * 
++	 * @param file
++	 * @param response
++	 */
++	public static void downloadFile(String file, HttpServletResponse response) {
++		String filename = file.substring(file.lastIndexOf(File.separator) + 1);
++		response.setContentType("application/x-msdownload");
++		response.setHeader("Content-Disposition", "attachment; filename="
++				+ filename); // no
++		// file
++		// path.
++
++		try {
++			BufferedOutputStream bos = new BufferedOutputStream(response
++					.getOutputStream());
++			BufferedInputStream bis = new BufferedInputStream(
++					new FileInputStream(file));
++			byte[] buf = new byte[4096];
++			while (bis.available() > 0) {
++				int len = bis.read(buf);
++				bos.write(buf, 0, len);
++			}
++			bos.flush();
++			bos.close();
++			bis.close();
++		} catch (Exception e) {
++			e.printStackTrace();
++		}
++	}
++
++	/**
++	 * 
++	 * 根据转义列表对字符串进行转义(escape)。
++	 * 
++	 * @param source
++	 *            待转义的字符串
++	 * 
++	 * @param escapeCharMap
++	 *            转义列表
++	 * 
++	 * @return 转义后的字符串
++	 */
++
++	public static String escapeCharacter(String source) {
++		if (source == null || source.length() == 0) {
++			return source;
++		}
++		if (escapeCharMap.size() == 0) {
++			return source;
++		}
++		StringBuffer sb = new StringBuffer(source.length() + 100);
++		StringCharacterIterator sci = new StringCharacterIterator(source);
++		for (char c = sci.first();
++
++		c != CharacterIterator.DONE;
++		c = sci.next()) {
++			String character = String.valueOf(c);
++			if (escapeCharMap.containsKey(character)) {
++				character = (String) escapeCharMap.get(character);
++			}
++			sb.append(character);
++		}
++
++		return sb.toString();
++
++	}
++
++
++	/**
++	 * 返回一个字符串所占用的字节个数
++	 * 
++	 * @param str
++	 *            源字符串
++	 * @return 字符串所占用的字节数，如"我ABC"占用5个字节
++	 */
++	public static int getByteCount(String str) {
++		int len = 0;
++		if (str == null) {
++			return len;
++		}
++		for (int i = 0; i < str.length(); i++) {
++			int codePoint = str.codePointAt(i);
++			if (codePoint > 0xFF) { // 中文字符
++				len += 2;
++			} else {
++				len++;
++			}
++		}
++		return len;
++	}
++
++
++	/**
++	 * 判断是否为合法的日期时间字符串
++	 * 
++	 * @param str_input
++	 * @return boolean;符合为true,不符合为false
++	 */
++	public static boolean isDate(String str_input, String rDateFormat) {
++		if (!isNull(str_input)) {
++			SimpleDateFormat formatter = new SimpleDateFormat(rDateFormat);
++			formatter.setLenient(false);
++			try {
++				formatter.format(formatter.parse(str_input));
++			} catch (Exception e) {
++				return false;
++			}
++			return true;
++		}
++		return false;
++	}
++
++	/**
++	 * 判断是否是Email
++	 * 
++	 * @param email
++	 * @return
++	 */
++	public static boolean isEmail(String email) {
++		String check = "^([a-z0-9A-Z]+[-|\\._]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
++		Matcher matcher = Pattern.compile(check).matcher(email);
++		return matcher.matches();
++	}
++	
++	/**
++	 * 随机生成length长度的数字字符串
++	 * @param length
++	 * @return
++	 */
++	public static String validCode(int length)
++	{
++		String validCodeStr = "";
++		Random random = new Random();
++		for(int i=0;i<length;i++)
++		{
++			validCodeStr+=random.nextInt(10);
++		}
++		
++		return validCodeStr;
++	}
++
++	/**
++	 * 判断字符串是否为NULL或者空字符串
++	 * 
++	 * @param str
++	 * @return
++	 */
++	public static boolean isEmpty(String str) {
++		if (str != null && !"".equals(str) && !"null".equals(str)) {
++			return false;
++		} else {
++			return true;
++		}
++	}
++
++	/**
++	 * 判断字符串是否不为空
++	 * 
++	 * @param str
++	 * @return
++	 */
++	public static boolean isNotEmpty(String str) {
++		if (str != null && !"".equals(str) && !"null".equals(str)) {
++			return true;
++		} else {
++			return false;
++		}
++	}
++
++	/**
++	 * 判断对象是否为NULL
++	 * 
++	 * @param str
++	 * @return
++	 */
++	public static boolean isNull(Object str) {
++		if (str == null)
++			return true;
++		else
++			return false;
++	}
++
++	/**
++	 * 将NULL转换成空字符串
++	 * 
++	 * @param value
++	 * @return
++	 */
++	public static String null2Str(Object value) {
++		return value == null || "null".equals(value.toString()) ? "" : value
++				.toString();
++	}
++
++	/**
++	 * 将NULL转换成空字符串
++	 * 
++	 * @param value
++	 * @return
++	 */
++	public static String null2Str(String value) {
++		return value == null || "null".equals(value) ? "" : value.trim();
++	}
++
++
++	/**
++	 * 解析字符串 exp：str=zhangsan,lisi,wangwu;
++	 * split(str,",")-->[zhangsan,lisi,wangwu]
++	 * 
++	 * @param string
++	 * @param delim
++	 * @return
++	 */
++	@SuppressWarnings( { "rawtypes", "unchecked" })
++	public static final String[] split(String string, String delim) {
++		StringTokenizer token = new StringTokenizer(string, delim);
++		String[] result = new String[token.countTokens()];
++		List tmp = new ArrayList();
++		while (token.hasMoreTokens()) {
++			tmp.add(token.nextToken());
++		}
++		tmp.toArray(result);
++		return result;
++	}
++
++	/**
++	 * String转换成Long
++	 * 
++	 * @param value
++	 * @return
++	 */
++	public static Long stringToLong(String value) {
++		Long l;
++		value = null2Str(value);
++		if ("".equals(value)) {
++			l = 0L;
++		} else {
++			try {
++				l = Long.valueOf(value);
++
++			} catch (Exception e) {
++				l = 0L;
++			}
++		}
++
++		return l;
++	}
++
++	/**
++	 * 按字节数来截取字符串，中文字母算2个字节，英文字节算1个字节。
++	 * 
++	 * @param str
++	 *            要截取的源字符串
++	 * @param byteCount
++	 *            要取的字节数
++	 * @return 返回截取的子串,如：substr("我ABC", 4)返回"我AB"，而 substr("我ABC汉DEF",
++	 *         6)则返回"我ABC"
++	 */
++	public static String substr(String str, int byteCount) {
++		if (str == null) {
++			return null;
++		}
++
++		StringBuffer sb = new StringBuffer(str.length());
++		int count = 0;
++		for (int i = 0; i < str.length(); i++) {
++			int codePoint = str.codePointAt(i);
++			char ch = str.charAt(i);
++			if (codePoint > 0xFF) { // 此为中文字符
++				count += 2;
++			} else {
++				count++;
++			}
++
++			if (count > byteCount) {
++				break;
++			}
++			sb.append(ch);
++		}
++		return sb.toString();
++	}
++
++	/**
++	 * src以split分割后的数组是否包含key
++	 * 
++	 * @param src
++	 * @param split
++	 * @return true-包含，false-不包含
++	 */
++	public static boolean isContainsStrBySplit(String src, String split,
++			String key) {
++		if (isEmpty(src)) {
++			return false;
++		}
++
++		String[] srcs = src.split(split);
++		for (String _src : srcs) {
++			if (_src.equals(key)) {
++				return true;
++			}
++		}
++
++		return false;
++	}
++
++	/**
++	 * 判断是否是弱密码，true-是，false-不是<br>
++	 * 1、不能是连续数字。2、不能是相同数字。3、不能是“189123”、“666888”。4、不能与用户名后六位相同
++	 */
++	public static boolean isPoolPwd(String username, String password) {
++		boolean very = true;
++
++		// 校验是否连续数字
++		String[] t = password.split("|");
++		int first = 0, next = 0, zd = 1, fd = -1;
++		for (int i = 1; i < t.length; i++) {
++			first = Integer.parseInt(t[i]);
++			if (i > 1) {
++				next = Integer.parseInt(t[i - 1]);
++			} else {
++				continue;
++			}
++			if ((next - first != zd) && (next - first != fd)) {
++				very = false;
++			}
++		}
++		if (very) {
++			return true;
++		}
++
++		// 不能是相同数字
++		very = true;
++		for (int i = 1; i < t.length; i++) {
++			first = Integer.parseInt(t[i]);
++			if (i > 1) {
++				next = Integer.parseInt(t[i - 1]);
++			} else {
++				continue;
++			}
++
++			if (next != first) {
++				very = false;
++				break;
++			}
++		}
++		if (very) {
++			return true;
++		}
++
++		// 不能是“189123”、“666888”
++		if (password.equals("189123") || password.equals("666888")) {
++			return true;
++		}
++
++		// 不能与用户名后6位相同
++		if (username.substring(username.length() - 6, username.length())
++				.equals(password)) {
++			return true;
++		}
++
++		return false;
++	}
++
++	/**
++	 * 字符串 编码
++	 * 
++	 * @param str
++	 * @return
++	 */
++	public static String encodeString(String str) {
++		try {
++			str = URLEncoder.encode(str, "UTF-8");
++
++		} catch (UnsupportedEncodingException e) {
++			e.printStackTrace();
++		}
++
++		return str;
++	}
++
++	/**
++	 * 字符串 转码
++	 * 
++	 * @param str
++	 * @return
++	 */
++	public static String decodeString(String str) {
++		try {
++			str = URLDecoder.decode(str, "UTF-8");
++		} catch (UnsupportedEncodingException e) {
++			e.printStackTrace();
++		}
++
++		return str;
++	}
++
++	/**
++	 * 将sql语句中的名称参数替换为对应map里的值
++	 * @param sql 参数以:key的形式传入
++	 * @param params
++	 * @return
++	 */
++	public static String buildSqlByParam(String sql, Map<String, Object> params) {
++		Iterator<String> it = params.keySet().iterator();
++		for(String name; it.hasNext();) {
++			name = it.next();
++			Object value = params.get(name);
++			String _value = "";
++			if(value instanceof java.util.Date) {
++				_value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
++			} else {
++				_value = String.valueOf(value);
++			}
++			sql = sql.replaceAll(":" + name, _value);
++		}
++		
++		return sql;
++	}
++	
++	public static boolean isEmptyArray(String[] a) {
++		if(a == null || a.length == 0) {
++			return true;
++		} else {
++			return false;
++		}
++	}
++	
++	/**
++	 * 获取x分钟后的时间
++	 * @param x
++	 * @return
++	 */
++	public static Date dateAfterMinut(int x) {    
++        Date date = new Date();    
++        Calendar cal = Calendar.getInstance();    
++        cal.setTime(new Date());    
++        cal.add(Calendar.MINUTE, x);// 24小时制    
++        date = cal.getTime();    
++        return date;    
++    }   
++	
++//    /**
++//     * 生成0.01-0.10之间的随机数字，精确到小数点后两位
++//     */
++//    public static Double randomNum(){
++//    	Random random = new Random();
++//
++//        float f1 = (random.nextFloat() / 10 + 0.01f);
++//        // 构造方法的字符格式这里如果小数不足2位,会以0补足.
++//        return (Double)f1.;
++//    }
++    
++    public static void main(String args[]){
++//    	System.out.println(randomNum());
++    }
++
++	/**
++     * 获取XML文本中指定标签的内容
++	 * @throws Exception 
++     */
++    public static String getXmlValue(String text, String key) throws Exception {
++    	if(!text.contains(key)) {
++    		throw new Exception("不包含此标签");
++    	}
++    	int index = text.indexOf(key);
++    	return text.substring(index + key.length(), text.indexOf("</", index));
++    }
++    
++	/**
++	 * 格式化double类型值，使得其末尾保留两位小数
++	 * 
++	 * @param value
++	 * @return
++	 */
++	public static String formatDouble(double value) {
++		DecimalFormat df = new DecimalFormat("######0.00");
++		return df.format(value);
++	}
++	
++	// 得到IP地址
++	public static String getIpAddr(HttpServletRequest request) {
++		String ip="";
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getHeader("X-Real-IP");
++		}
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getHeader("Proxy-Client-IP");
++		}
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getHeader("WL-Proxy-Client-IP");
++		}
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getHeader("HTTP_CLIENT_IP");
++		}
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
++		}
++		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
++			ip = request.getRemoteAddr();
++		}
++		return ip;
++	}
++	
++	/**
++	 * 将map中的key和value按照&key=value&形式拼接返回
++	 * @param req
++	 * @return
++	 */
++	public static String mapToGet(Map<String, Object> req) {
++		String ret = "";
++		for(Iterator<String> it = req.keySet().iterator(); it.hasNext();) {
++			String key = it.next();
++			ret += (key + "=" + req.get(key) + "&");
++		}
++		return ret.substring(0, ret.length() - 1);
++	}
++
++	/**
++	 * 将map中的key和value按照xml形式拼接返回
++	 * @param req
++	 * @return
++	 */
++	public static String mapToXml(Map<String, Object> req) {
++		String ret = "";
++		for(Iterator<String> it = req.keySet().iterator(); it.hasNext();) {
++			String key = it.next();
++			ret += ("<" + key + ">" + req.get(key) + "</" + key + ">");
++		}
++		return ret;
++	}
++}
+\ No newline at end of file
+Index: MD5.java
+===================================================================
+--- MD5.java	(revision 0)
++++ MD5.java	(revision 4)
+@@ -0,0 +1,69 @@
++package com.agentsale.util;
++
++import java.security.MessageDigest;
++import java.security.NoSuchAlgorithmException;
++
++public class MD5 {
++	/**
++	 * MD5加密
++	 * 
++	 * @param val
++	 * @return
++	 * @throws NoSuchAlgorithmException
++	 */
++	public static String getMD5(String val) {
++		MessageDigest md5;
++		try {
++			md5 = MessageDigest.getInstance("MD5");
++//			md5.update(new String(val.getBytes(System.getProperty("file.encoding")), "UTF-8").getBytes("UTF-8"));
++			md5.update(val.getBytes());
++			byte[] m = md5.digest();// 加密
++			return getString(m);
++		} catch (Exception e) {
++			e.printStackTrace();
++		}
++		return null;
++	}
++
++	/**
++	 * 将MD5生成的二进制转换为字符串
++	 * 
++	 * @param b
++	 * @return
++	 */
++	private static String getString(byte[] b) {
++		StringBuffer sb = new StringBuffer();
++		for (int i = 0; i < b.length; i++) {
++			String s = Integer.toHexString(b[i]);
++			if (s.length() == 8) {
++				sb.append(s.substring(6, 8));
++			} else if (s.length() < 2) {
++				sb.append("0" + s);
++			} else {
++				sb.append(s);
++			}
++
++		}
++		return sb.toString();
++	}
++
++	public final static String getMessageDigest(byte[] buffer) {
++		char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
++		try {
++			MessageDigest mdTemp = MessageDigest.getInstance("MD5");
++			mdTemp.update(buffer);
++			byte[] md = mdTemp.digest();
++			int j = md.length;
++			char str[] = new char[j * 2];
++			int k = 0;
++			for (int i = 0; i < j; i++) {
++				byte byte0 = md[i];
++				str[k++] = hexDigits[byte0 >>> 4 & 0xf];
++				str[k++] = hexDigits[byte0 & 0xf];
++			}
++			return new String(str);
++		} catch (Exception e) {
++			return null;
++		}
++	}
++}
+\ No newline at end of file
+Index: ResourceUtil.java
+===================================================================
+--- ResourceUtil.java	(revision 0)
++++ ResourceUtil.java	(revision 4)
+@@ -0,0 +1,96 @@
++package com.agentsale.util;
++
++import java.io.FileReader;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.Properties;
++
++public class ResourceUtil {
++	private static Properties sysConfig = new Properties();
++	private static Properties urlConfig = new Properties();
++	
++	private static Map<String, Properties> configs = new HashMap<String, Properties>();
++	private static String CLASSPATH = ResourceUtil.class.getResource("/").getPath();
++	
++	static {
++		try {
++			System.out.println("context:" + getContextRealPath());
++			getResource(sysConfig, "sys-config.properties");
++			getResource(urlConfig, "url-config.properties");
++			
++		} catch (Exception e) {
++			e.printStackTrace();
++		}
++	}
++	
++	private static void getResource(Properties config, String file) throws Exception {
++		FileReader fr = new FileReader(CLASSPATH + file);
++		config.load(fr);
++	}
++	
++	public static String getSystemCfg(String key) {
++		return sysConfig.getProperty(key, null);
++	}
++	
++	public static String getUrlCfg(String key) {
++		return urlConfig.getProperty(key, null);
++	}
++	
++	public static Properties getProperties(String file) {
++		try {
++			Properties _sysConfig;
++			if(!file.endsWith(".properties")) {
++				file += ".properties";
++			}
++			_sysConfig = configs.get(file);
++			if(_sysConfig == null) {
++				_sysConfig = new Properties();
++				getResource(_sysConfig, file);
++				configs.put(file, _sysConfig);
++			}
++		} catch (Exception e) {
++			e.printStackTrace();
++		}
++		
++		return configs.get(file);
++	}
++	
++	public static Properties getUrlCfgProperties() {
++		return urlConfig;
++	}
++	
++	public static Properties getDBMapCfgProperties() {
++		return getProperties("dbmap-config.properties");
++	}
++	
++	/**
++	 * 从指定配置文件中获取指定key的
++	 * @param file 可以是全名，也可以是不带后缀名的
++	 * @param key
++	 * @return
++	 */
++	public static String getConfig(String file, String key) {
++		Properties _sysConfig;
++		try {
++			if(!file.endsWith(".properties")) {
++				file += ".properties";
++			}
++			
++			_sysConfig = configs.get(file);
++			if(_sysConfig == null) {
++				_sysConfig = new Properties();
++				getResource(_sysConfig, file);
++				configs.put(file, _sysConfig);
++			}
++			
++			return _sysConfig.getProperty(key, null);
++		} catch (Exception e) {
++			e.printStackTrace();
++			return null;
++		}
++	}
++	
++	public static String getContextRealPath() {
++		return CLASSPATH.substring(0, CLASSPATH.indexOf("/WEB-INF"));
++	}
++}
+Index: DateUtil.java
+===================================================================
+--- DateUtil.java	(revision 0)
++++ DateUtil.java	(revision 4)
+@@ -0,0 +1,33 @@
++package com.agentsale.util;
++
++import java.text.SimpleDateFormat;
++import java.util.Calendar;
++import java.util.Date;
++
++public class DateUtil {
++	public static Date addDay(Date date, int days) {
++		Calendar c = Calendar.getInstance();
++		c.setTime(date);
++		c.add(Calendar.DAY_OF_YEAR, days);
++		return c.getTime();
++	}
++	
++	public static String format(Date date, String pattern) {
++		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
++		return sdf.format(date);
++	}
++	
++	public static Date parse(String date, String pattern) throws Exception {
++		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
++		return sdf.parse(date);
++	}
++	
++	public static String getDate(Date date, String pattern) {
++		date = new Date();
++		SimpleDateFormat sdf = new SimpleDateFormat();
++		return sdf.format(date);
++	}
++	public static void main(String[] args) {
++		System.out.println(addDay(new Date(), -100));
++	}
++}
+Index: FileUtil.java
+===================================================================
+--- FileUtil.java	(revision 0)
++++ FileUtil.java	(revision 4)
+@@ -0,0 +1,155 @@
++package com.agentsale.util;
++
++import java.awt.Image;
++import java.awt.image.BufferedImage;
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.FileOutputStream;
++import java.io.IOException;
++import java.util.Date;
++import java.util.Iterator;
++
++import javax.imageio.ImageIO;
++import javax.imageio.ImageReader;
++import javax.imageio.stream.ImageInputStream;
++
++import com.sun.image.codec.jpeg.ImageFormatException;
++import com.sun.image.codec.jpeg.JPEGCodec;
++import com.sun.image.codec.jpeg.JPEGEncodeParam;
++import com.sun.image.codec.jpeg.JPEGImageEncoder;
++
++public class FileUtil {
++	
++	/**
++	 * 弃用，该方法使用的不是jdk自带的标准图像操作类，可能会被删除。请使用scale方法
++	 */
++	@Deprecated
++	public static String resize(int width, int height, String savePath, File targetImage) throws ImageFormatException, IOException {
++		FileInputStream fis = new FileInputStream(targetImage);
++		Image _targetImage = javax.imageio.ImageIO.read(fis);
++		width = Math.max(width, 1);
++        height = Math.max(height, 1);
++        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
++        image.getGraphics().drawImage(_targetImage, 0, 0, width, height, null);
++        
++        File file = new File(savePath);
++        if(file.exists()) {
++        	file.delete();
++        } else {
++        	if(!file.getParentFile().exists()) {
++        		file.getParentFile().mkdirs();
++        	}
++        	file.createNewFile();
++        }
++        
++        FileOutputStream fos = new FileOutputStream(file);
++        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fos);
++        
++        JPEGEncodeParam encodeParam = JPEGCodec.getDefaultJPEGEncodeParam(image); 
++        /** 设置图片压缩质量 */  
++        encodeParam.setQuality(1f, true);  
++        encoder.encode(image, encodeParam);  
++ 
++        image.flush();
++        fos.flush();
++        fos.close();
++        
++        return savePath;
++    }
++	
++	/**
++	 * 将大图片转换成180*180小图片
++	 * @param img
++	 * @param savePath 目标文件路径
++	 * @return
++	 */
++	public static File changeImageToSmall(File img, String savePath) {
++		try {
++//			File file = new File(ImageUtil.resize(180, 180, savePath, img));
++//			return file;
++			
++			return scale(img, savePath, 180, 180);
++		} catch (Exception e) {
++			e.printStackTrace();
++			return null;
++		}
++	}
++	
++	/**
++	 * 缩放图片类
++	 * @param srcFile
++	 * @param dstFile
++	 * @param dstWidth
++	 * @param dstHeight
++	 * @return
++	 */
++	public static File scale(File srcFile, String dstFile, int dstWidth, int dstHeight) {
++		try {
++		    ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
++		    Iterator<ImageReader> iterator = ImageIO.getImageReaders(iis);
++		    ImageReader reader = (ImageReader) iterator.next();
++		    reader.setInput(iis, true);
++		    BufferedImage source = reader.read(0);
++		    BufferedImage tag = new BufferedImage(dstWidth, dstHeight, source.getType());
++		    tag.getGraphics().drawImage(source, 0, 0, dstWidth, dstHeight, null);
++		    File file = new File(dstFile);
++	        if(file.exists()) {
++	        	file.delete();
++	        } else {
++	        	if(!file.getParentFile().exists()) {
++	        		file.getParentFile().mkdirs();
++	        	}
++	        	file.createNewFile();
++	        }
++		    ImageIO.write(tag, reader.getFormatName(), file);
++		    return file;
++		} catch (Exception e) {
++		    e.printStackTrace();
++		    return null;
++		}
++	}
++	
++	/**
++	 * 拷贝文件到指定路径
++	 * @param src
++	 * @param dst
++	 * @param type 0-不删除源文件，1-删除源文件
++	 * @throws Exception 
++	 */
++	public static void copyFile(File src, String dst, int delete) throws Exception {
++		try {
++			File dstFile = new File(dst);
++			if(dstFile.exists()) {
++				dstFile.delete();
++			}
++			if(dstFile.exists()) {
++				dstFile.delete();
++	        } else {
++	        	if(!dstFile.getParentFile().exists()) {
++	        		dstFile.getParentFile().mkdirs();
++	        	}
++	        	dstFile.createNewFile();
++	        }
++			
++			FileInputStream fis = new FileInputStream(src);
++			FileOutputStream fos = new FileOutputStream(dstFile);
++			byte[] c = new byte[(int) src.length()];
++			fis.read(c);
++			fos.write(c);
++			fos.flush();
++			
++			fis.close();
++			fos.close();
++			if(delete == 1) {
++				src.delete();
++			}
++		} catch (Exception e) {
++			e.printStackTrace();
++			throw e;
++		}
++	}
++	
++	public static String getNewFileName(String file) {
++		return DateUtil.format(new Date(), "yyyyMMddHHmmss") + StringUtil.getRodamCode(5) + file.substring(file.lastIndexOf("."), file.length());
++	}
++}
+Index: SMS56.java
+===================================================================
+--- SMS56.java	(revision 0)
++++ SMS56.java	(revision 4)
+@@ -0,0 +1,83 @@
++package com.agentsale.util;
++
++import java.util.HashMap;
++import java.util.Set;
++
++import com.cloopen.rest.sdk.CCPRestSmsSDK;
++
++public class SMS56 {
++	// 初始化SDK
++	private static CCPRestSmsSDK restAPI = new CCPRestSmsSDK();
++	static {
++		// ******************************注释*********************************************
++		// *初始化服务器地址和端口 *
++		// *沙盒环境（用于应用开发调试）：restAPI.init("sandboxapp.cloopen.com", "8883");*
++		// *生产环境（用户应用上线使用）：restAPI.init("app.cloopen.com", "8883"); *
++		// *******************************************************************************
++		restAPI.init("app.cloopen.com", "8883");
++
++		// ******************************注释*********************************************
++		// *初始化主帐号和主帐号令牌,对应官网开发者主账号下的ACCOUNT SID和AUTH TOKEN *
++		// *ACOUNT SID和AUTH TOKEN在登陆官网后，在“应用-管理控制台”中查看开发者主账号获取*
++		// *参数顺序：第一个参数是ACOUNT SID，第二个参数是AUTH TOKEN。 *
++		// *******************************************************************************
++		restAPI.setAccount("8a48b5514eaf512c014eb02d24590277", "5c13babcdedc4bff87a287065201445e");
++
++		// ******************************注释*********************************************
++		// *初始化应用ID *
++		// *测试开发可使用“测试Demo”的APP ID，正式上线需要使用自己创建的应用的App ID *
++		// *应用ID的获取：登陆官网，在“应用-应用列表”，点击应用名称，看应用详情获取APP ID*
++		// *******************************************************************************
++		restAPI.setAppId("aaf98f894eaeb647014eb0b3f9110462");
++
++		// ******************************注释****************************************************************
++		// *调用发送模板短信的接口发送短信 *
++		// *参数顺序说明： *
++		// *第一个参数:是要发送的手机号码，可以用逗号分隔，一次最多支持100个手机号 *
++		// *第二个参数:是模板ID，在平台上创建的短信模板的ID值；测试的时候可以使用系统的默认模板，id为1。 *
++		// *系统默认模板的内容为“【云通讯】您使用的是云通讯短信模板，您的验证码是{1}，请于{2}分钟内正确输入”*
++		// *第三个参数是要替换的内容数组。 *
++		// **************************************************************************************************
++
++		// **************************************举例说明***********************************************************************
++		// *假设您用测试Demo的APP ID，则需使用默认模板ID 1，发送手机号是13800000000，传入参数为6532和5，则调用方式为
++		// *
++		// *result = restAPI.sendTemplateSMS("13800000000","1" ,new
++		// String[]{"6532","5"}); *
++		// *则13800000000手机号收到的短信内容是：【云通讯】您使用的是云通讯短信模板，您的验证码是6532，请于5分钟内正确输入 *
++		// *********************************************************************************************************************
++	}
++
++	public static String invokeHttpTest(String phoneNumber, String flag, String pwd, String code) throws Exception {
++		HashMap<String, Object> result = null;
++		String validCode = StringUtil.validCode(6);
++		if (flag.equals("proxy")) {
++			result = restAPI.sendTemplateSMS(phoneNumber, "97917", new String[] {pwd, code});
++		} else if (flag.equals("agent")) {
++			result = restAPI.sendTemplateSMS(phoneNumber, "97918", new String[] {pwd});
++		}
++		System.out.println("SDKTestGetSubAccounts result=" + result);
++		if ("000000".equals(result.get("statusCode"))) {
++			// 正常返回输出data包体信息（map）
++			HashMap<String, Object> data = (HashMap<String, Object>) result.get("data");
++			Set<String> keySet = data.keySet();
++			for (String key : keySet) {
++				Object object = data.get(key);
++			}
++		} else {
++			// 异常返回输出错误码和错误信息
++			System.out.println("错误码=" + result.get("statusCode") + " 错误信息= " + result.get("statusMsg"));
++		}
++		return validCode;
++	}
++
++	public static void main(String args[]) {
++		try {
++			invokeHttpTest("18956012564", "agent", "123456", "");
++		} catch (Exception e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++	}
++
++}
+\ No newline at end of file

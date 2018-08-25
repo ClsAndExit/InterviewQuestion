@@ -1,0 +1,26 @@
+对于文件内容的操作主要分为两大类
+
+分别是：
+
+　　字符流
+
+　　字节流
+
+其中，字符流有两个抽象类：Writer   Reader
+
+其对应子类FileWriter和FileReader可实现文件的读写操作
+
+BufferedWriter和BufferedReader能够提供缓冲区功能，用以提高效率
+
+ 
+
+同样，字节流也有两个抽象类：InputStream   OutputStream
+
+其对应子类有FileInputStream和FileOutputStream实现文件读写
+
+BufferedInputStream和BufferedOutputStream提供缓冲区功能
+
+文件夹/文件操作
+输入输出方式
+管道/基本数据类型  的输入输出
+序列化和反序列化

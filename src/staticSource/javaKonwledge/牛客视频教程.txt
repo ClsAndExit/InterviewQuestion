@@ -1,0 +1,56 @@
+2018年7月7日----第一课-------
+ string.compareTO();
+ string.compareTOIgnoreCase();
+ string.codePointAt();
+ string.concat();//末尾加上
+ string.toUpperCase();
+ string.replace();//替换
+ string.replaceAll();//支持正则替换
+ 
+ --list
+ Collections.reverse();//逆序
+ Colleection.sort();//排序//自定义，制定排序函数，匿名内部类
+ Collections.shuffle(array);//对数组随机打乱
+ 
+ --hashmap
+ map.entrySet();//冒号遍历  
+ addAll();
+ 
+ random.srtSeed();//随机种子
+ SimpleDateFormat();//设置时间格式
+ UUID.randomUUID();//随机字符串
+ 
+2018年7月7日----第二课上半截---------
+ 
+ 幂等性
+ GET POST 底层（面试时的闪光点）
+ 
+ Velocity模板语言：定义宏：功能复用  单引号不会解析，双引号才会解析
+ 
+2018年7月8日-----第二课下半截--------
+ 
+ request：参数解析 cookie读取 http请求字段  文件上传
+ response 页面内容返回  cookie下发  http字段设置，headers
+ 
+ Ioc  //无需关注对象初始化  享元模式 依赖注入 控制反转
+ 
+ AOP    //不用手动的去调用函数  网站性能 方法调用时间，注释等
+ //插入到原有的流程中   拦截器 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

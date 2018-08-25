@@ -1,0 +1,9 @@
+java中将数组array转为ArrayList
+https://blog.csdn.net/caoxiaohong1005/article/details/79090906
+https://blog.csdn.net/snarlfuture/article/details/16966921
+
+数组中删除元素的方法
+1、
+2、使用Apache commons库中的ArrayUtils类根据索引来删除我们指定的元素。
+Apache commons lang3下载地址：
+http://commons.apache.org/proper/commons-lang/download_lang.cgi

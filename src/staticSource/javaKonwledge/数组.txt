@@ -1,0 +1,101 @@
+概念：
+同一种数据类型的集合（任意数据类型）。
+Java中的数组是真数组。
+Java中数组是一个对象。
+变量放在栈中，数据部分放在堆中。
+（栈内存的特点：栈内存存储的都是局部变量，变量一旦出了自己的作用域那么马上会从内存中消失，释放内存空间）
+（堆内存的特点：堆内存存储的都是对象数据，对象一旦被使用完，并不会马上从内存中消失，而是等垃圾回收器不定时把垃圾对象回收，这时候对象才会消失，释放内存）
+数组的声明：
+int [] myList;
+创建数组：
+//“=”是把数组对象内存地址赋予给myList变量
+int [] myList = new int [length];//length可以为变量，但是该变量在使用之前一定要初始化
+int [] myList = {1,2,3,4};//不可以拆分写
+int [] myList = new int []{1,2,3,4};//可以拆分写
+int [] my = mylist;
+//使用浅拷贝
+int [] my = mylist.clone();//mylist需要初始化
+//二维数组
+int [][] myList = new int [length][myList[i].length];//myList[i].length可以不同
+遍历数组：
+for (double element: myList) {
+         System.out.println(element);
+      }
+使用Arrays：（java.util.Arrays 类能方便地操作数组，它提供的所有方法都是静态的。）
+遍历：System.out.println(Arrays.toString(myList));
+查找（二分）：binarySearch(int []a,int key)（数组在使用前是排好序的）
+排序（快排）：sort(int [] a)
+Arrays类有一个静态方法sort,利用这个方法我们可以传入我们要排序的数组进去排序，因为我们传入的是一个数组的引用，所以排序完成的 结果也通过这个引用的来更改数组.对于整数、字符串排序，jdk提供了默认的实现，如果要对一个对象数组排序，则要自己实现 java.util.Comparator接口。
+
+
+
+动态数组（ArrayList）：
+ArrayList是一个容量可以动态增长的动态数组。它继承了AbstractList。同时ArrayList不是线程安全的，一般在单线程中才使用，在多线程中一般使用Vactor。
+遍历方式：
+1、迭代器遍历：
+Iterator<Integer> it = myArrayList.iterator();
+while(it.hasNext()){
+    System.out.print(it.next() + " ");
+}
+2、索引值遍历：
+for(int i = 0; i < myArrayList.size(); i++){
+   System.out.print(myArrayList.get(i) + " ");
+}
+3、foreach遍历：
+for(Integer number : myArrayList){
+   System.out.print(number + " ");
+}
+基本操作：
+添加元素到尾部：add();
+添加元素到指定位置：add(index,value);
+删除指定位置上面的元素并返回该位置上的元素：remove(index);
+返回元素个数：size();
+返回指定位置上的元素：get(index);
+按适当顺序（从第一个到最后一个元素）返回包含此列表中所有元素的数组:toArray();
+替换指定位置上的元素：set(index,value);
+
+其他：contains()等等。
+注意：
+ArrayList<int>//此处要声明整数类型需要使用int的封装类Integer。
+
+List myArrayList = new ArrayList();
+如果像这样使用默认的构造方法，初始容量大小10，超出之后会重新分配内存。（如果直接指定大小则不会重新分配，除非超出现有范围）
+JDK1.6 int newCapacity = (oldCapacity * 3)/2 + 1;//1.5倍+1
+JDK1.8 int newCapacity = oldCapacity + (oldCapacity >> 1);//1.5倍
+（有没有什么方法可以查看Java中内存分配情况，或者能够返回ArrayList实际占用内存大小的函数也行。使用jvisualvm.exe只能看见性能，不能看见具体变量情况）
+
+如果想ArrayList中添加大量元素，可使用ensureCapacity方法一次性增加capacity，可以减少增加重分配的次数提高性能。
+ArrayList是可以存放null值的。
+
+Java
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
