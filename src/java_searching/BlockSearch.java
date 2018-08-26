@@ -1,4 +1,4 @@
-package searching;
+package java_searching;
 
 import java.util.ArrayList;
 

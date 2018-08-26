@@ -1,0 +1,16 @@
+/**
+*2018年8月26日
+*参考网址：https://blog.csdn.net/lengyuedanhen/article/details/81873478
+*/
+HashMap的底层数组长度总是2的n次方，在构造函数中存在：capacity <<= 1;这样做总是能够保证HashMap的底层数组长度为2的n次方。
+当length为2的n次方时，h&(length - 1)就相当于对length取模，而且速度比直接取模快得多，这是HashMap在速度上的一个优化。
+
+
+
+
+
+
+
+
+
+

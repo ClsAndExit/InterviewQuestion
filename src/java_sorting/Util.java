@@ -1,4 +1,4 @@
-package sorting;
+package java_sorting;
 
 /**
  * @Author Zhang
