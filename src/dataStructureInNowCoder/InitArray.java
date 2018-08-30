@@ -1,4 +1,4 @@
-package dataStructureInNowCoder.learningNotes;
+package dataStructureInNowCoder;
 
 public class InitArray {
     public static void main(String[] args) {
