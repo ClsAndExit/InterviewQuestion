@@ -1,0 +1,115 @@
+提现：
+银行：内部系统，外网接口，提交一次转账一次
+幂等性：多次请求只提交一次
+
+分布式事务：分布式系统下保证事务一致性
+
+银行系统接口挂了 怎样满足用户的需求（对用户的请求做一个记录保存，再去尝试调用银行接口）不能让用户申请两次
+
+对自己系统的要求：系统只能转账一次，转一次成功，用户只能提交一次
+
+不能该银行系统的功能，不能改变用户的使用习惯
+
+业务场景2
+京东订单系统：
+
+
+分布式事务系统：TCC
+
+A-------调用------------>B(扣款转账)
+
+T:try  尝试 锁住资源
+C:comfirm 确定扣款并提交
+C:cancel 钱不够，结束
+
+MQ
+
+
+
+实战场景：订单系统
+
+数据库<---------------订单系统------------------------->发货系统
+                        ^
+    保存记录用户请求     |
+      再去调用订单系统   |用户提交请求
+      告诉用户正在处理中 |
+                       |
+                       用户
+
+restTemplate
+http httpClient
+
+@Transactional  //事务管理器  拿一个数据库链接 return之后才会释放链接
+
+编程式事务  可以使事务范围缩小  优化性能
+    锁定代码块  回调
+显著提升性能
+
+
+解决幂等性：
+
+//这个是有顺序的进行访问，不是并发
+
+fori =6 {
+    Thread t = new Thread(new ExcuteThread)
+}
+
+private calss ExcuteThread implements Runnable{
+    private Order order;
+    public ExcuteThread(Order order){
+        this.order = order;
+    }
+
+    @Override
+    public void run(){
+        orderService.sendOrderByTemplate(order);//调用发货接口
+    }
+}
+
+
+悲观锁：select * from table fro update
+
+乐观锁: select * from table where id ='123';
+        update table set .....  //与别人共享这张表
+
+基于状态机的乐观锁
+version++
+只有第一个线程的请求能够执行成功，后面的重复请求的线程都无法执行
+
+原子操作类和CAS
+AQS高并发编程
+
+BeanFactory  FactoryBean 的区别
+Spring MVC 与Spring 如何结合的
+    他们不是同一个层次的
+    SpringMVC是一个Tomcat  Spring管理JavaBean
+
+IOC Bean如何创建  动态的代理
+
+Tomcat的内存模型
+
+Nginx高并发分流进阶    为什么要用    而不是  怎么用
+
+Redis  根据不同的业务场景设计  高可用集群
+
+Mysql 分库分表  为什么 怎么办
+
+微服务 Dubbo
+
+Spring Boot 核心组件start、actuator等
+Spring Cloud应用以及源码解读
+Docker虚拟化技术（京东 618）
+
+
+
+《P8 年薪1KW  哈哈哈》
+
+
+
+
+
+
+
+
+
+
