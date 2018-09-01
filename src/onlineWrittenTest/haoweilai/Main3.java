@@ -12,7 +12,7 @@ public class Main3 {
         int length = array.length;
         int[] b = new int[length];
         int imax = 0;
-        for (int i = 1; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             b[i] = array[i];
             imax = 0;
             for (int j = 0; j < i; j++) {

@@ -14,7 +14,11 @@
 
 普里姆(Prim)算法
 
+Queue的put,add跟offer的区别:
+https://blog.csdn.net/zmx729618/article/details/52979616
 
+LinkedList详解
+https://www.cnblogs.com/skywang12345/p/3308807.html
 
 
 
