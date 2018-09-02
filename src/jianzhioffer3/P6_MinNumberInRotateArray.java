@@ -15,7 +15,31 @@ public class P6_MinNumberInRotateArray {
         System.out.println(minNumberInRotateArray(array));
     }
 
+    /**
+     * 方法一：直接遍历数组，找到array[i]<array[i-1]，则array[i]即为所求
+     * 方法二：二分查找变形
+     *      (1)mid = low + (high-low)/2
+     *      分三种情况：
+     *      (2)如果array[mid] > array[high]:则最小的值一定在数组的后半部分；low = mid +1
+     *      (3)如果array[mid] = array[high]:这种情况可能是数组中存在相同的值，不好判断只好一个一个试：high = high-1
+     *      (4)如果array[mid] < array[high]:最小值一定在数组的左边或是mid本身：high= mid
+     * @param array
+     * @return
+     */
     public static int minNumberInRotateArray(int[] array){
-        return 0;
+        int low = 0;
+        int high = array.length-1;
+        //当low = high 则返回该值即为所求
+        while (low<high){
+            int mid = low+(high-low)/2;
+            if (array[mid] > array[high]){
+                low = mid+1;
+            }else if (array[mid] == array[high]){
+                high --;
+            }else {
+                high = mid;
+            }
+        }
+        return array[low];
     }
 }
