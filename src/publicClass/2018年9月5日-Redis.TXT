@@ -1,0 +1,26 @@
+为什么使用Redis
+Redis的基本使用
+Redis运行原理流程
+jedis.set  //通过socket-->发送TCP -->redis  <ServerSocket redis>
+
+通过伪装的服务知道jedis封装了resp协议
+
+
+将现有数据表记录快速存放到Redis
+    原理：Mysql 表 ------> redis
+    1、用MySQL用户和密码登录 ----》MySQL------》库
+    2、执行查询语句SELECT--》查询结果result
+    导入到redis
+    链接登陆-----》ip port -a 1234567(password) pipe(管道方式)
+
+
+    应用场景：用户登录 权限 等经常要用到的热点数据
+
+手写jedis客户端实战
+
+PipeLine  预提交
+pipeline.sync(); 提交
+
+多任务提交的情况下 速度显著提高
+
+
