@@ -1,4 +1,6 @@
-package jianzhioffer3;
+package jianzhioffer3.zhenti;
+
+import jianzhioffer3.TreeNode;
 
 /**
  * @author Mr.Zhang

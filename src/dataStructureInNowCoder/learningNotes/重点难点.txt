@@ -19,8 +19,11 @@ https://blog.csdn.net/zmx729618/article/details/52979616
 
 LinkedList详解
 https://www.cnblogs.com/skywang12345/p/3308807.html
+java中使用队列的时候向队列中添加元素使用offer函数；
+                          删除元素使用pop函数；
 
-
+在Java中和在C++中定义数组不同，为什么？？
+Java ： int [] a  = new int[这里可以是函数传入的参数，但是在C++中就不行];
 
 
 

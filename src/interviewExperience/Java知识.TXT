@@ -83,3 +83,6 @@ https://www.cnblogs.com/whgk/p/6138522.html
 
 其他知识点：
 https://blog.csdn.net/so_sss/article/details/40120485
+
+从硬件层面解释多线程  多CPU与多核CPU的区别：
+https://blog.csdn.net/u012398362/article/details/51475213
