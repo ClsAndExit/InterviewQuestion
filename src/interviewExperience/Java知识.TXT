@@ -62,7 +62,8 @@ https://www.cnblogs.com/whgk/p/6138522.html
             在这时还要考虑线程没有分配CPU时间的时候无法响应JVM的中断请求，走到安全点去中断挂起，这时需要使用安全区域来解决。
             安全区域是指：在一段代码片段之中，引用关系不会发生变化，在这个区域的任意地方开始GC都是安全的，也可以把SafeRegion看作是被扩展了的Safepoint。
 3.5、垃圾收集器
-    A、Serial收集器... ...
+    A、cms收集器... ...
+    B、G1收集器... ...
 
 4、voliatile和synchonized有什么区别？synchonized和jdk提供的Lock包又有什么区别？
 答：

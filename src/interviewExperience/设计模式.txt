@@ -1,0 +1,70 @@
+超详细网址：https://blog.csdn.net/cto_1649900265/article/details/70666418
+一、单例模式：
+使用优势：1、减少创建对象实例所带来的系统开销；2、便于系统跟踪单个Java实例的生命周期、实例状态等。
+
+一般将单例模式的方法命名为getInstance。该方法可以有参数，这些参数可能是创建类的实例所需参数。
+
+实现：
+//使用一个变量来缓存曾经创建的实例
+public static Singleton instance
+//将构造器用private修饰，隐藏该构造器
+private Singleton (){
+    sout("Singleton被构造！")
+}
+//提供一个静态方法(不能通过对象调用，为类方法)，用于返回类的实例
+//该方法可以加入自定义的控制，保证只产生一个实例对象
+public static Singleton getInstance(){
+    if(instance == null){
+        instance = new Singleton();
+    }
+    return instance;
+}
+
+二、简单工厂：
+使用优势：让对象的调用者和对象创建过程分离，当对象调用者需要对象时，直接向工厂请求即可。从而避免了
+对象的调用者与对象的实现类以硬编码方式耦合，以提高系统的可维护性、可扩展性。工厂模式也有小小的缺点：
+当产品修改时，工厂类也要做相应的修改。
+
+简单工厂类：OutputFactory
+public Output getPrinterOutput(String type){
+    if(type.equalsIgnorCase("better")){//这种比较方式忽略大小写
+        return new BetterPrinter();
+    }else{
+        return new Printer();
+    }
+}
+
+客户端请求：Computer
+public class Computer
+{
+    private Output out;
+    public Computer(Output out)
+    {
+       this.out = out;
+    }
+    public static void main(String[] args)
+    {
+       //创建OutputFactory
+       OutputFactory of = new OutputFactory();
+       //将Output对象传入，创建Computer对象
+       Computer c = new Computer(of.getPrinterOutput("normal"));
+
+       c.faunction();
+
+        c = new Computer(of.getPrinterOutput("better"));
+
+        c.function()
+
+三、工厂方法和抽象工厂
+如果我们不想在工厂类中进行逻辑判断，程序可以为不同产品类提供不同的工厂，不同的工厂生产不同的产品。
+当使用工厂方法设计模式时，对象调用者需要与具体的工厂类耦合。
+
+为了解决客户端代码与不同工厂类耦合的问题。在工厂类的基础上再增加一个工厂类，该工厂类不制造具体的被
+调用对象，而是制造不同工厂对象。（感觉又回到了简单工厂模式）
+
+四、代理模式
+
+
+
+
+

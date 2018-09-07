@@ -1,0 +1,20 @@
+1、Java中的double的精度
+https://blog.csdn.net/u011032983/article/details/51810504
+解决方法：使用BigDecimal并且一定要使用String来构造
+https://blog.csdn.net/z69183787/article/details/72236722
+
+
+2、for(;;)与while(true)
+自己的博客
+
+3、DBL_EPSILON和 FLT_EPSILON的用法
+https://blog.csdn.net/x356982611/article/details/19922453
+
+
+
+
+
+
+
+
+
