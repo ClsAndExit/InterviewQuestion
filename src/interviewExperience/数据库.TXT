@@ -1,3 +1,6 @@
+mysql数据库高可用高扩展性架构方案实施(大牛之作) 链接：http://blog.51cto.com/shanhu/1212605
+mybatis与hibernate的对比 链接：https://blog.csdn.net/w_rcss/article/details/78708431
+
 1、数据库常用的操作？
 答：
 
