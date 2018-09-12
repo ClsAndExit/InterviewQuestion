@@ -1,3 +1,20 @@
+2018年9月12日 一下午
+坑！！招的实习
+0、自我介绍
+1、两个String相加，底层实现（StringBuffer）
+2、数据库分页查询关键字
+3、set怎样保证数据不重复（hashcode，equals）
+4、自旋锁
+5、wait与sleep的区别
+6、使用Spring Boot的感受
+7、Mybatis怎样实现数据的批量写入
+
+HR :
+面试感觉
+实习情况
+会通知实习（10/20  4K）
+
+
 牛客链接：：
 https://www.nowcoder.com/discuss/55597
 了解的设计模式（最好结合jdk的中用例结合着说）

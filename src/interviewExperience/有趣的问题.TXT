@@ -10,9 +10,25 @@ https://blog.csdn.net/z69183787/article/details/72236722
 3、DBL_EPSILON和 FLT_EPSILON的用法
 https://blog.csdn.net/x356982611/article/details/19922453
 
+4、数据库事务总结的贼厉害：
+https://www.cnblogs.com/fjdingsd/p/5273008.html
 
+5、TCP与UDP的区别;
+https://blog.csdn.net/xiaobangkuaipao/article/details/76793702
 
+6、Linux常用指令大全：
+http://www.cnblogs.com/yjd_hycf_space/p/7730690.html
 
+7、hashCode与equals的区别：（hashCode相当有用了，例如set的content方法）
+https://www.cnblogs.com/jesonjason/p/5492208.html
+为什么要重写equals方法啊：使用Object的equals()方法是比较两个对象的内存地址是否相等
+但是在String等封装类中已经对equals方法进行了重写。。。。哈哈哈哈没想到吧！
+在重写equals的同时也要重写hashCode。
+
+8、对IOC与AOP的理解：
+https://blog.csdn.net/melodysky/article/details/52329766
+
+9、
 
 
 
