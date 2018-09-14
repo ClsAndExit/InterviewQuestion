@@ -1,0 +1,35 @@
+2018年9月14日
+地点：吉大
+
+
+技术一面：
+项目
+Springboot优点
+mybatis优点
+MySQL优化
+sql索引的优缺点
+常用的集合：
+    ArrayList：怎么排序
+    HashMap：value可以有几个为null
+
+技术二面：
+自我介绍
+项目介绍
+云计算比赛的规模
+socket编程问了一下
+自己理解的MVC是什么样的
+Spring IOC原理
+Springboot默认使用的端口有哪些，怎样更改
+类加载多了会报什么异常，什么类型的异常（内存溢出分为几种）
+HashMap底层实现原理，一个key,value存储的过程是怎样的
+画以下JVM内存模型
+实现锁的三种方式
+syn与lock的底层实现有什么不同
+
+
+HR面：
+地点选择
+选择企业都关注哪几方面：
+
+目前拿到offer了没有
+薪资
