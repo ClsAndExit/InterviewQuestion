@@ -8,6 +8,7 @@ Springboot优点
 mybatis优点
 MySQL优化
 sql索引的优缺点
+sql关键字：order by   group by  ASC  DESC
 常用的集合：
     ArrayList：怎么排序
     HashMap：value可以有几个为null
@@ -30,6 +31,7 @@ syn与lock的底层实现有什么不同
 HR面：
 地点选择
 选择企业都关注哪几方面：
-
+未来规划是什么样的
+提出加班性强
 目前拿到offer了没有
 薪资

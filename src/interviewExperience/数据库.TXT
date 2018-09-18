@@ -33,6 +33,10 @@ having的用法；having与where的区别：
 6、数据库的索引有什么作用？用什么来实现的？
 答：
 
+索引的优缺点：
+https://www.cnblogs.com/wyy123/p/6027083.html
+
+
 7、B树和B+树有什么区别？为什么索引不用B树？
 答：
 
