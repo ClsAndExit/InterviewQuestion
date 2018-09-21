@@ -28,7 +28,10 @@ https://www.cnblogs.com/jesonjason/p/5492208.html
 8、对IOC与AOP的理解：
 https://blog.csdn.net/melodysky/article/details/52329766
 
-9、
+9、Http1.0与Http1.1的区别：
+https://www.cnblogs.com/gofighting/p/5421890.html
+
+10、
 
 
 
